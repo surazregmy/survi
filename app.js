@@ -10,13 +10,20 @@ var dbConfig = require("./config/db");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var surveysRouter = require("./routes/survey");
+var authRouter = require("./routes/auth");
 //Database setup
 
 let db = dbConfig();
 
 var app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(compression());
 
 // view engine setup
@@ -30,6 +37,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
+app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/surveys", surveysRouter);
 
