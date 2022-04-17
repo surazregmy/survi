@@ -7,7 +7,14 @@ let surveyModel = mongoose.Schema(
     option2: String,
     option3: String,
     option4: String,
+    responses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "response",
+      },
+    ],
   },
+
   {
     collection: "surveys",
   }

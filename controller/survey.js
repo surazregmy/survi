@@ -1,4 +1,5 @@
 let Survey = require("../model/survey");
+let Response = require("../model/response");
 
 function getErrorMessage(err) {
   if (err.errors) {
@@ -20,6 +21,34 @@ module.exports.list = function (req, res, next) {
   });
 };
 
+module.exports.getResponse = function (req, res, next) {
+  let surveyID = req.params.id;
+
+  Response.find(
+    {
+      survey: surveyID,
+    },
+    (err, responseList) => {
+      if (err) {
+        return console.error(err);
+      } else {
+        res.status(200).json(responseList);
+      }
+    }
+  );
+};
+
+module.exports.findOne = function (req, res, next) {
+  console.log(req.params.id);
+  Survey.findById(req.params.id, (err, survey) => {
+    if (err) {
+      return console.error(err);
+    } else {
+      res.status(200).json(survey);
+    }
+  });
+};
+
 module.exports.add = (req, res, next) => {
   let newSurvey = Survey({
     _id: req.body.id,
@@ -31,6 +60,25 @@ module.exports.add = (req, res, next) => {
   });
 
   Survey.create(newSurvey, (err, item) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).send({
+        success: false,
+        message: getErrorMessage(err),
+      });
+    } else {
+      return res.status(200).json(item);
+    }
+  });
+};
+
+module.exports.respond = (req, res, next) => {
+  let newResponse = Response({
+    survey: req.body.questionId,
+    option: req.body.option,
+  });
+
+  Response.create(newResponse, (err, item) => {
     if (err) {
       console.log(err);
       return res.status(400).send({
